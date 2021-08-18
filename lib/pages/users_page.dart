@@ -4,6 +4,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:tarea4/services/auth_service.dart';
 import 'package:tarea4/models/user_model.dart';
+import 'package:tarea4/services/users_service.dart';
 import 'package:tarea4/widgets/custom_button.dart';
 
 
@@ -17,32 +18,7 @@ class _UsersPageState extends State<UsersPage> {
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  List<User> usersList = [
-    User(
-      name: 'test1',
-      lastName: 'test1lastName',
-      phoneNumber: '809-578-1111',
-      email: 'test1@test.com',
-      userName: 'test1userName',
-      password: '123456',
-    ),
-    User(
-      name: 'test2',
-      lastName: 'test2lastName',
-      phoneNumber: '809-578-1111',
-      email: 'test2@test.com',
-      userName: 'test2userName',
-      password: '123456',
-    ),
-    User(
-      name: 'test3',
-      lastName: 'test3lastName',
-      phoneNumber: '809-578-1111',
-      email: 'test3@test.com',
-      userName: 'test3userName',
-      password: '123456',
-    ),
-  ];
+  List<User> usersList = [];
 
   final TextStyle style = new TextStyle(
     color: Colors.black,
@@ -97,9 +73,8 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   _cargarUsuarios() async{
-     //this.usersList = await usersService.getUsers();
-    //print(this.usersList);
-    await Future.delayed(Duration(milliseconds: 1000));
+    this.usersList = await getUsers();
+    print(this.usersList);
     setState(() {});
     _refreshController.refreshCompleted();
   }
@@ -156,7 +131,9 @@ class _UsersPageState extends State<UsersPage> {
           title: 'Actualizar',
           titleColor: Colors.white,
           width: 160,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, 'update');
+          },
         ),
 
         SizedBox(width:15),
@@ -165,7 +142,9 @@ class _UsersPageState extends State<UsersPage> {
           title: 'Eliminar',
           titleColor: Colors.white,
           width: 160,
-          onPressed: authService.autenticando ? null : () {},
+          onPressed: authService.autenticando ? null : () {
+            Navigator.pushNamed(context, 'delete');
+          },
         ),
 
         SizedBox(width:15),

@@ -49,7 +49,7 @@ class AuthService with ChangeNotifier {
   }
 
   Future register(String name, String lastName, String email, String phoneNumber, String userName, String password) async{
-    this.autenticando = false;
+    this.autenticando = true;
     final data = {
       'name': name,
       'lastName': lastName,
@@ -79,11 +79,10 @@ class AuthService with ChangeNotifier {
   }
 
 
-  Future<bool> deleteUser(String id) async{
+  Future<bool> deleteUser(String uid) async{
     
-    this.autenticando = false;
 
-    final resp = await http.delete( Uri.parse('${Environment.apiUrl}/$id'),
+    final resp = await http.delete( Uri.parse('${Environment.apiUrl}/users/$uid'),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -93,9 +92,41 @@ class AuthService with ChangeNotifier {
       print('Usuario eliminado');
       return true;
     } else{
+      print('Oh no!');
       return false;
     }
 
   }
-  
+
+
+  Future updateUser(String uid, String name, String lastName, String email, String phoneNumber, String userName, String password) async{
+    this.autenticando = true;
+    final data = {
+      'name': name,
+      'lastName': lastName,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'userName': userName,
+      'password': password,
+    };
+
+    final resp = await http.put( Uri.parse('${Environment.apiUrl}/users/$uid'),
+      body: jsonEncode(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    );
+
+    print(resp.body);
+    this.autenticando = false;
+
+    if( resp.statusCode == 200 ) {
+      print('Usuario actualizado');
+      return true;
+    } else{
+      final respBody = jsonDecode(resp.body);
+      //print(respBody['errors'][0]['msg']);
+      return respBody['errors'][0]['msg'];
+    }
+  } 
 }
